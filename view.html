@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>View & Hire Participants</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>👥 Protest Participants</header>
+
+  <div class="container">
+    <table id="memberTable">
+      <tr>
+        <th>Photo</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Location</th>
+        <th>Status</th>
+        <th>Hire</th>
+      </tr>
+    </table>
+  </div>
+
+  <script>
+    const table = document.getElementById("memberTable");
+    const all = JSON.parse(localStorage.getItem("participants")) || [];
+
+    all.forEach((p, i) => {
+      const row = table.insertRow();
+      const photoCell = row.insertCell(0);
+      const img = document.createElement("img");
+      img.src = p.photo || "default.jpg";
+      img.classList.add("avatar");
+      photoCell.appendChild(img);
+
+      row.insertCell(1).innerText = p.name;
+      row.insertCell(2).innerText = p.email;
+      row.insertCell(3).innerText = p.location;
+      row.insertCell(4).innerText = p.status;
+
+      const hireBtn = document.createElement("button");
+      hireBtn.innerText = p.hired ? "Hired ✅" : "Hire";
+      hireBtn.disabled = p.hired;
+
+      hireBtn.onclick = function() {
+        hireBtn.innerText = "Hired ✅";
+        hireBtn.disabled = true;
+        row.style.background = "#d1ffd1";
+        all[i].hired = true;
+        localStorage.setItem("participants", JSON.stringify(all));
+      };
+      row.insertCell(5).appendChild(hireBtn);
+    });
+  </script>
+</body>
+</html>

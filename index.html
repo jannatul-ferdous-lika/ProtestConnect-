@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <title>Home | Protest Platform</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">📢 Protest Platform</div>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="friends.html">Friends</a>
+      <a id="profileLink" href="profile.html">Profile</a>
+      <a href="hire-list.html" id="hireListLink" style="display:none">Hire List</a>
+      <button id="logoutBtn" class="btn ghost">Logout</button>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="create-post card">
+      <div class="me">
+        <img id="meAvatar" class="avatar" src="" alt="me">
+        <div>
+          <strong id="meName"></strong><br>
+          <small id="meEmail"></small>
+        </div>
+      </div>
+
+      <textarea id="postText" placeholder="What's happening?"></textarea>
+      <input type="file" id="postPhoto" accept="image/*" />
+      <div class="row" style="margin-top:8px">
+        <button id="postBtn" class="btn primary">Post</button>
+        <button id="clearBtn" class="btn ghost">Clear</button>
+      </div>
+    </section>
+
+    <section id="feed" class="feed"></section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Home | Protest Platform</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>Protest Platform</header>
+
+<div class="container">
+  <button id="logoutBtn">Logout</button>
+  <a href="friends.html"><button>Friends</button></a>
+  <a href="view.html"><button>Hire</button></a>
+
+  <section class="card">
+    <h3>Create Post</h3>
+    <textarea id="postContent" placeholder="What's on your mind?"></textarea>
+    <input type="file" id="postPhoto" accept="image/*">
+    <button id="postBtn">Post</button>
+  </section>
+
+  <section class="card">
+    <h3>Posts</h3>
+    <div id="posts"></div>
+  </section>
+
+  <section class="card">
+    <h3>Online Users</h3>
+    <div id="onlineUsers"></div>
+  </section>
+</div>
+
+<script>
+const CURRENT_KEY = "pp_currentUser";
+const POSTS_KEY = "pp_posts";
+const LOGGED_KEY = "pp_loggedInUsers";
+
+const current = JSON.parse(localStorage.getItem(CURRENT_KEY));
+if(!current) window.location.href="login.html";
+
+document.getElementById("logoutBtn").onclick = ()=>{
+  let logged = JSON.parse(localStorage.getItem(LOGGED_KEY)) || [];
+  logged = logged.filter(u=> u.email !== current.email);
+  localStorage.setItem(LOGGED_KEY, JSON.stringify(logged));
+  localStorage.removeItem(CURRENT_KEY);
+  window.location.href="login.html";
+};
+
+// Post
+document.getElementById("postBtn").onclick = ()=>{
+  const content = document.getElementById("postContent").value;
+  const photoFile = document.getElementById("postPhoto").files[0];
+  if(!content && !photoFile) return alert("Write something or upload photo");
+
+  function savePost(photo){
+    const posts = JSON.parse(localStorage.getItem(POSTS_KEY)) || [];
+    posts.unshift({author: current.name, email: current.email, photo: current.photo, content, postPhoto: photo, likes:0, comments:[], shares:0});
+    localStorage.setItem(POSTS_KEY, JSON.stringify(posts));
+    renderPosts();
+    document.getElementById("postContent").value="";
+    document.getElementById("postPhoto").value="";
+  }
+
+  if(photoFile){
+    const reader = new FileReader();
+    reader.onload = function(){ savePost(reader.result); };
+    reader.readAsDataURL(photoFile);
+  } else { savePost(null); }
+};
+
+function renderPosts(){
+  const div = document.getElementById("posts");
+  const posts = JSON.parse(localStorage.getItem(POSTS_KEY)) || [];
+  div.innerHTML="";
+  posts.forEach((p,i)=>{
+    const postDiv = document.createElement("div");
+    postDiv.className="card post";
+    postDiv.innerHTML = `
+      <div class="online-user">
+        <img src="${p.photo}" class="avatar">
+        <b>${p.author}</b>
+      </div>
+      <p>${p.content}</p>
+      ${p.postPhoto? `<img src="${p.postPhoto}">`: ""}
+      <button class="like-btn">Like (${p.likes})</button>
+      <button class="comment-btn">Comment (${p.comments.length})</button>
+      <button class="share-btn">Share (${p.shares})</button>
+    `;
+    postDiv.querySelector(".like-btn").onclick = ()=>{
+      p.likes++; localStorage.setItem(POSTS_KEY, JSON.stringify(posts)); renderPosts();
+    };
+    div.appendChild(postDiv);
+  });
+}
+
+function renderOnlineUsers(){
+  const div = document.getElementById("onlineUsers");
+  const logged = JSON.parse(localStorage.getItem(LOGGED_KEY)) || [];
+  if(logged.length===0){ div.innerHTML="<p class='muted'>No one online</p>"; return; }
+  div.innerHTML="";
+  logged.forEach(u=>{
+    const el = document.createElement("div");
+    el.className="online-user";
+    el.innerHTML = `<img src="${u.photo}" class="avatar"><div>${u.name}</div>`;
+    div.appendChild(el);
+  });
+}
+
+renderPosts();
+renderOnlineUsers();
+</script>
+</body>
+</html>

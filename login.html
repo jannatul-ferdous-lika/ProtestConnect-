@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login | Protest Platform</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="center-card login-card">
+    <h2>Protest Connect</h2>
+    <form id="loginForm">
+      <input type="text" id="name" placeholder="Full Name" required />
+      <input type="email" id="email" placeholder="Email Address" required />
+      <label class="small">Profile Photo (optional)</label>
+      <input type="file" id="photo" accept="image/*" />
+      <div class="row" style="margin-top:10px">
+        <button type="submit" class="btn primary">Login / Create</button>
+        <a href="index.html" class="btn ghost">Continue as Guest</a>
+      </div>
+    </form>
+    <p class="muted small" style="margin-top:12px">Note: Data is stored in your browser (localStorage).</p>
+  </div>
+
+  <script>
+    const USERS_KEY = "pp_users";
+    const CURRENT_KEY = "pp_currentUser";
+
+    if (!localStorage.getItem(USERS_KEY)) localStorage.setItem(USERS_KEY, JSON.stringify([]));
+
+    document.getElementById("loginForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      const name = document.getElementById("name").value.trim();
+      const email = document.getElementById("email").value.trim().toLowerCase();
+      const photoFile = document.getElementById("photo").files[0];
+
+      if (!name || !email) return alert("Name and email required.");
+
+      function finish(photoData) {
+        const users = JSON.parse(localStorage.getItem(USERS_KEY)) || [];
+        let user = users.find(u => u.email === email);
+        if (!user) {
+          user = {
+            name,
+            email,
+            photo: photoData || "default.jpg",
+            friends: [],
+            friendRequestsSent: [],
+            friendRequestsReceived: [],
+            hires: [] // emails of people this user has hired
+          };
+          users.push(user);
+        } else {
+          user.name = name;
+          if (photoData) user.photo = photoData;
+        }
+        localStorage.setItem(USERS_KEY, JSON.stringify(users));
+        localStorage.setItem(CURRENT_KEY, JSON.stringify(user));
+        window.location.href = "index.html";
+      }
+
+      if (photoFile) {
+        const reader = new FileReader();
+        reader.onload = () => finish(reader.result);
+        reader.readAsDataURL(photoFile);
+      } else finish("default.jpg");
+    });
+  </script>
+</body>
+</html>

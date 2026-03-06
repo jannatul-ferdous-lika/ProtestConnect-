@@ -1,0 +1,81 @@
+<<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Your Profile | Protest Platform</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>👤 My Profile</h1>
+    <nav>
+      <a href="index.html">Home</a>
+      <button id="logoutBtn">Logout</button>
+    </nav>
+  </header>
+
+  <div class="profile-container">
+    <div id="profileInfo" class="profile-info"></div>
+    <h2>Your Posts</h2>
+    <div id="profilePosts" class="posts"></div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
+!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Join Protest</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>🪧 Join the Protest</header>
+
+  <div class="container">
+    <form id="joinForm">
+      <label>Protest Location:</label>
+      <select id="location" required>
+        <option value="">--Select--</option>
+        <option value="Khulna">Khulna</option>
+        <option value="Senhati">Senhati</option>
+        <option value="Daulatpur">Daulatpur</option>
+      </select>
+
+      <label>Participation:</label>
+      <select id="status" required>
+        <option value="Interested">Interested</option>
+        <option value="Confirmed">Confirmed</option>
+      </select>
+
+      <button type="submit">Submit Registration</button>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById("joinForm").addEventListener("submit", function(e){
+      e.preventDefault();
+
+      const user = JSON.parse(localStorage.getItem("currentUser"));
+      const location = document.getElementById("location").value;
+      const status = document.getElementById("status").value;
+
+      const participant = {
+        name: user.name,
+        email: user.email,
+        location,
+        status,
+      };
+
+      // Save to allParticipants list
+      let all = JSON.parse(localStorage.getItem("participants")) || [];
+      all.push(participant);
+      localStorage.setItem("participants", JSON.stringify(all));
+
+      alert("Registration Complete ✅");
+      window.location.href = "view.html";
+    });
+  </script>
+</body>
+</html>
